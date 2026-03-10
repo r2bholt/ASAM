@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ASAM Level of Care Helper</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f3ff;
+      --bg-alt: #fdfdfd;
+      --card: #ffffff;
+      --accent: #10b981;
+      --accent-soft: rgba(16, 185, 129, 0.14);
+      --accent-soft-strong: rgba(16, 185, 129, 0.18);
+      --accent-light: #a7f3d0;
+      --text: #111827;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --danger: #dc2626;
+      --radius-lg: 18px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.08);
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, #e0f2fe 0, transparent 45%),
+        radial-gradient(circle at bottom right, #fee2e2 0, transparent 50%),
+        #f9fafb;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 28px 12px;
+    }
+    .app {
+      width: 100%;
+      max-width: 980px;
+      background: var(--bg-alt);
+      border-radius: 26px;
+      border: 1px solid rgba(209, 213, 219, 0.8);
+      box-shadow: var(--shadow-soft);
+      padding: 22px 22px 26px;
+    }
+    @media (min-width: 768px) {
+      .app {
+        padding: 26px 30px 30px;
+      }
+    }
+    .app-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+      border-bottom: 1px solid rgba(209, 213, 219, 0.9);
+      padding-bottom: 14px;
+    }
+    .title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .title {
+      font-size: 1.4rem;
+      font-weight: 650;
+      letter-spacing: 0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f172a;
+    }
+    .pill {
+      font-size: 0.7rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #065f46;
+      background:
+        linear-gradient(135deg, #ecfdf5, #d1fae5);
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+    }
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--muted);
+      max-width: 520px;
+    }
+    .subtitle strong {
+      color: #374151;
+      font-weight: 600;
+    }
+    .tagline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #374151;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+    .tag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #16a34a;
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(0, 1.3fr);
+      gap: 18px;
+    }
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+    .panel {
+      background: linear-gradient(135deg, #ffffff, #f9fafb);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 16px 16px 18px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .panel-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #4b5563;
+    }
+    .panel-caption {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .panel-badge {
+      font-size: 0.72rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      color: #4b5563;
+      background: #f3f4f6;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+    }
+    .dimension {
+      border-radius: var(--radius-md);
+      padding: 10px 11px 11px;
+      background: #ffffff;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.04);
+    }
+    .dimension-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .dimension-title {
+      font-size: 0.88rem;
+      font-weight: 580;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #111827;
+    }
+    .dim-chip {
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(156, 163, 175, 0.9);
+      background: #f3f4f6;
+      color: #4b5563;
+    }
+    .dimension-subtitle {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .rating-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .rating-label {
+      font-size: 0.78rem;
+      color: #6b7280;
+      min-width: 76px;
+    }
+    select,
+    textarea,
+    input[type="text"] {
+      width: 100%;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      background: #ffffff;
+      color: var(--text);
+      padding: 7px 9px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
+    }
+    select:focus,
+    textarea:focus,
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-soft);
+      background: #f9fafb;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 64px;
+    }
+    .hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .severity-description {
+      font-size: 0.76rem;
+      color: #1f2933;
+      margin-top: 4px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      background: #f0fdf4;
+      border: 1px solid rgba(52, 211, 153, 0.25);
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      justify-content: flex-end;
+    }
+    .btn {
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 0.82rem;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      background: transparent;
+      color: var(--text);
+      transition: background-color 0.15s, border-color 0.15s, transform 0.08s,
+        box-shadow 0.12s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981, #14b8a6);
+      color: #ecfdf5;
+      border-color: rgba(16, 185, 129, 0.8);
+      box-shadow: 0 10px 22px rgba(16, 185, 129, 0.4);
+    }
+    .btn-secondary {
+      border-color: rgba(209, 213, 219, 0.9);
+      background: #f9fafb;
+      color: #374151;
+    }
+    .btn-danger {
+      border-color: rgba(248, 113, 113, 0.8);
+      color: #7f1d1d;
+      background: #fef2f2;
+    }
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(148, 163, 184, 0.25);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #22c55e, #14b8a6);
+    }
+    .btn-secondary:hover {
+      background: #f3f4f6;
+    }
+    .btn-danger:hover {
+      background: #fee2e2;
+    }
+    .result-card {
+      border-radius: var(--radius-md);
+      padding: 11px 12px 12px;
+      background: #ffffff;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      margin-bottom: 10px;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.04);
+    }
+    .result-title {
+      font-size: 0.86rem;
+      font-weight: 580;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+      color: #111827;
+    }
+    .badge {
+      font-size: 0.74rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      background: #f9fafb;
+      color: #374151;
+    }
+    .severity-badge {
+      border-color: rgba(16, 185, 129, 0.45);
+      background: #ecfdf5;
+      color: #064e3b;
+    }
+    .result-text {
+      font-size: 0.82rem;
+      color: #111827;
+    }
+    .levels-list {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin: 7px 0 0;
+      padding-left: 17px;
+    }
+    .levels-list li {
+      margin-bottom: 3px;
+    }
+    .alert {
+      font-size: 0.78rem;
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      background: #fefce8;
+      border: 1px solid #facc15;
+      color: #854d0e;
+    }
+    .alert-danger {
+      border-color: rgba(220, 38, 38, 0.9);
+      color: #7f1d1d;
+      background: #fef2f2;
+    }
+    .alert-note {
+      font-size: 0.76rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .field-label {
+      font-size: 0.8rem;
+      font-weight: 550;
+      margin-top: 8px;
+      margin-bottom: 4px;
+      color: #374151;
+    }
+    .muted {
+      color: var(--muted);
+      font-size: 0.74rem;
+    }
+    #summaryText {
+      min-height: 120px;
+    }
+    .footer {
+      margin-top: 12px;
+      font-size: 0.74rem;
+      color: #6b7280;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .footer strong {
+      color: #111827;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <div class="title-group">
+        <div class="title">
+          ASAM Level of Care Helper
+          <span class="pill">Outpatient SUD + MH</span>
+        </div>
+        <div class="subtitle">
+          A gentle decision-support tool to help you map ASAM dimensions to a level of care.
+          <strong>You stay in the driver’s seat as the clinician.</strong>
+        </div>
+      </div>
+      <div class="tagline">
+        <span class="tag-dot"></span>
+        Supporting your judgment · Not replacing it
+      </div>
+    </header>
+    <div class="layout">
+      <!-- Left: Inputs -->
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">ASAM Dimension Ratings</div>
+            <div class="panel-caption">Rate 0–4 for each area of need</div>
+          </div>
+          <span class="panel-badge">0 = none · 4 = severe</span>
+        </div>
+        <div class="grid" id="dimensions">
+          <!-- Dimension blocks injected by JS -->
+        </div>
+        <div class="field-label" style="margin-top: 14px;">Clinical notes (optional)</div>
+        <textarea id="clinicalNotes" placeholder="Key observations, strengths, risks, and context..."></textarea>
+        <div class="hint">These notes will be included in the generated summary to paste into your chart.</div>
+        <div class="btn-row">
+          <button class="btn btn-secondary" type="button" id="resetBtn">Clear all</button>
+          <button class="btn btn-primary" type="button" id="calculateBtn">
+            Calculate suggested level
+          </button>
+        </div>
+      </section>
+      <!-- Right: Output -->
+      <section class="panel">
+        <div class="panel-header">
+          <div>
+            <div class="panel-title">Suggested Level of Care</div>
+            <div class="panel-caption">Based on the highest and combined needs</div>
+          </div>
+        </div>
+        <div id="riskAlert" class="alert" style="display: none;"></div>
+        <div class="result-card">
+          <div class="result-title">
+            <span>System suggestion</span>
+            <span class="badge severity-badge" id="severityBadge">No data yet</span>
+          </div>
+          <div class="result-text" id="suggestedLevel">
+            Enter ratings on the left and click “Calculate suggested level” to see a recommendation.
+          </div>
+          <ul class="levels-list">
+            <li><strong>0.5</strong> – Early intervention / brief intervention</li>
+            <li><strong>1.0</strong> – Outpatient (1–2x/week)</li>
+            <li><strong>2.1</strong> – Intensive outpatient (3–9 hrs/week)</li>
+            <li><strong>2.5</strong> – Day treatment / PHP</li>
+            <li><strong>3.x / 4</strong> – Residential / inpatient / detox (referral)</li>
+          </ul>
+        </div>
+        <div class="field-label">Clinician-selected level of care</div>
+        <select id="clinicianLevel">
+          <option value="">Select (or accept system suggestion)</option>
+          <option value="0.5 – Early intervention">0.5 – Early intervention</option>
+          <option value="1.0 – Outpatient">1.0 – Outpatient</option>
+          <option value="2.1 – Intensive outpatient (IOP)">2.1 – Intensive outpatient (IOP)</option>
+          <option value="2.5 – Day treatment / PHP">2.5 – Day treatment / PHP</option>
+          <option value="3.x – Residential (refer)">3.x – Residential (refer)</option>
+          <option value="4 – Inpatient / Detox (refer)">4 – Inpatient / Detox (refer)</option>
+        </select>
+        <div class="field-label">If different from suggestion, briefly explain why</div>
+        <textarea id="overrideReason" placeholder="Protective factors, access/insurance, culture, preferences, support system, supervision input, etc."></textarea>
+        <div class="field-label">Generated summary (copy into note / referral)</div>
+        <textarea id="summaryText" readonly></textarea>
+        <div class="btn-row">
+          <button class="btn btn-secondary" type="button" id="copySummaryBtn">
+            Copy summary
+          </button>
+          <button class="btn btn-danger" type="button" id="quickSafetyBtn">
+            Quick safety reminder
+          </button>
+        </div>
+        <div class="alert-note">
+          This tool supports ASAM-consistent reasoning in an outpatient SUD + mental health clinic.
+          Please always pair it with your own judgment, supervision, and agency policies.
+        </div>
+      </section>
+    </div>
+    <footer class="footer">
+      <span><strong>Safety first</strong>: If there is imminent risk to self/others, follow your emergency protocols immediately.</span>
+      <span>ASAM criteria © American Society of Addiction Medicine – referenced conceptually here as a clinical aid.</span>
+    </footer>
+  </div>
+  <script>
+    // ASAM severity descriptions for each dimension and level
+    const ASAM_SEVERITY_DESCRIPTIONS = {
+      d1: {
+        label: "Acute Intoxication / Withdrawal",
+        severity: {
+          0: "No recent substance use or withdrawal. No history of withdrawal complications. No current intoxication.",
+          1: "Recent use, but no or very mild withdrawal symptoms (e.g., mild cravings, mild sleep changes). No medical risk anticipated if use stops.",
+          2: "Clear recent use with predictable withdrawal (e.g., moderate alcohol, opioid, or benzo use) but medically stable; outpatient withdrawal may be possible with close monitoring and reliable support.",
+          3: "High or repeated heavy use with likely significant withdrawal (e.g., history of moderate withdrawal, escalating tolerance, poor supports); 24‑hour monitoring likely needed to manage withdrawal safely.",
+          4: "Active or impending severe withdrawal (e.g., history of seizures/DTs, very heavy current use, autonomic instability) or current severe intoxication; needs immediate medical / inpatient detox."
+        }
+      },
+      d2: {
+        label: "Biomedical Conditions",
+        severity: {
+          0: "No relevant medical conditions, or stable minor issues that do not affect treatment.",
+          1: "Stable medical conditions requiring routine care (e.g., diabetes, asthma) but do not limit participation in outpatient SUD/MH treatment.",
+          2: "Significant but reasonably stable medical problems (e.g., pregnancy, chronic pain, liver disease) that require coordination with medical providers and may complicate treatment, but are not acutely unstable.",
+          3: "Unstable or deteriorating medical problems that may make outpatient care unsafe or ineffective without higher medical monitoring.",
+          4: "Acute, potentially life‑threatening medical condition (e.g., chest pain, severe infection, uncontrolled seizures) or medical instability requiring immediate ED / inpatient care."
+        }
+      },
+      d3: {
+        label: "Emotional / Behavioral / Cognitive",
+        severity: {
+          0: "No significant psychiatric symptoms, or well‑managed conditions with minimal impairment; no SI/HI, self‑harm, or psychosis.",
+          1: "Mild to moderate symptoms (e.g., anxiety, depressed mood) with good insight and control; no active SI/HI; functioning largely intact.",
+          2: "Clear psychiatric symptoms (e.g., moderate depression/anxiety, PTSD, some impulsivity or self‑harm history) causing functional impairment, but client can engage in safety planning and adhere to outpatient care.",
+          3: "Severe mood, anxiety, behavioral, or cognitive symptoms (e.g., frequent self‑harm, psychotic symptoms, severe dissociation, poor impulse control) with limited ability to self‑manage, though not clearly imminently dangerous; may need intensive or 24‑hour structure.",
+          4: "Imminent risk of suicide or homicide, recent serious attempt, active psychosis with danger, or extreme behavioral dyscontrol or cognitive impairment; requires emergency / inpatient psychiatric care."
+        }
+      },
+      d4: {
+        label: "Readiness to Change",
+        severity: {
+          0: "Highly motivated and engaged; change is self‑initiated; consistently follows through with treatment and recovery tasks.",
+          1: "Generally motivated but with occasional ambivalence; engages in treatment with minimal prompting; open to feedback and planning.",
+          2: "Noticeable ambivalence or mixed motivation; inconsistent follow‑through; may attend but minimize problems; needs motivational enhancement and structure.",
+          3: "Low motivation or active resistance; attends primarily due to external pressure; frequently misses sessions or disregards plans; may require more intensive/structured setting to engage.",
+          4: "No current internal motivation to change; actively opposed to treatment or intent to continue high‑risk use/behavior despite serious consequences; outpatient engagement unlikely without high structure or containment."
+        }
+      },
+      d5: {
+        label: "Relapse / Continued Use Potential",
+        severity: {
+          0: "No or very low risk; long period of stability or remission; strong coping skills and supports; robust internal and external protections.",
+          1: "Some risk (e.g., occasional cravings, mild stressors) but generally good insight, coping strategies, and support; able to use skills and ask for help.",
+          2: "Clear relapse/continued‑use risk: recent slip(s), strong cravings, high stress, or limited coping; some protective factors exist but may not be sufficient without enhanced support.",
+          3: "High likelihood of relapse or continued problematic use/behavior without intensive structure (e.g., repeated relapses in standard outpatient, strong triggers, significant unresolved trauma or stressors).",
+          4: "Very high, near‑certain risk of immediate relapse/continued use or rapid deterioration (e.g., repeated overdoses, recurrent high‑risk episodes shortly after discharge) unless in 24‑hour or highly structured care."
+        }
+      },
+      d6: {
+        label: "Recovery / Living Environment",
+        severity: {
+          0: "Stable, safe housing; environment is neutral or supportive of recovery; minimal exposure to substances or violence.",
+          1: "Some stressors (e.g., conflict, financial strain) but environment is basically safe; limited but not harmful contact with substance use; some supportive relationships.",
+          2: "Environment has reliable stressors or temptations (e.g., some people in household using, frequent conflict, limited sober supports); not clearly unsafe but not recovery‑conducive.",
+          3: "Environment is clearly unsupportive or destabilizing (e.g., most peers/household members use; frequent high conflict; emotional or occasional physical abuse; high instability of housing, legal or childcare issues).",
+          4: "Environment is actively unsafe (e.g., ongoing violence or severe abuse, homelessness with high victimization risk, constant exposure to substances or criminal activity); recovery is not feasible without removal to a safer / more structured setting (residential or equivalent)."
+        }
+      }
+    };
+    const dimensionDefs = [
+      {
+        id: "d1",
+        name: "Dimension 1",
+        label: "Acute Intoxication / Withdrawal",
+        help: "Recent use, withdrawal risk, and how safely symptoms can be managed in outpatient care.",
+      },
+      {
+        id: "d2",
+        name: "Dimension 2",
+        label: "Biomedical Conditions",
+        help: "Medical problems that could complicate or limit SUD/MH treatment.",
+      },
+      {
+        id: "d3",
+        name: "Dimension 3",
+        label: "Emotional / Behavioral / Cognitive",
+        help: "Suicidality, psychosis, severe mood/anxiety, and cognitive issues.",
+      },
+      {
+        id: "d4",
+        name: "Dimension 4",
+        label: "Readiness to Change",
+        help: "Current motivation, engagement, and external pressure to be in treatment.",
+      },
+      {
+        id: "d5",
+        name: "Dimension 5",
+        label: "Relapse / Continued Use Potential",
+        help: "Risk of return to use or symptom worsening without structure.",
+      },
+      {
+        id: "d6",
+        name: "Dimension 6",
+        label: "Recovery / Living Environment",
+        help: "Housing, safety, people around them, stability, and supports.",
+      },
+    ];
+    function createDimensionUI() {
+      const container = document.getElementById("dimensions");
+      container.innerHTML = "";
+      dimensionDefs.forEach((dim) => {
+        const div = document.createElement("div");
+        div.className = "dimension";
+        div.innerHTML = `
+          <div class="dimension-header">
+            <div class="dimension-title">
+              <span class="dim-chip">${dim.name}</span>
+              <span>${dim.label}</span>
+            </div>
+            <span class="muted">0–4</span>
+          </div>
+          <div class="dimension-subtitle">${dim.help}</div>
+          <div class="rating-row">
+            <span class="rating-label">Severity</span>
+            <select data-dimension="${dim.id}" aria-label="${dim.label} severity">
+              <option value="">Select</option>
+              <option value="0">0 – None / minimal</option>
+              <option value="1">1 – Mild</option>
+              <option value="2">2 – Moderate</option>
+              <option value="3">3 – Serious</option>
+              <option value="4">4 – Severe / imminent danger</option>
+            </select>
+          </div>
+          <div class="hint">Choose a number to see a brief description for this client right now.</div>
+          <div class="severity-description" data-desc="${dim.id}" style="display:none;"></div>
+          <div class="hint" style="margin-top:6px;">Optional note</div>
+          <textarea data-note="${dim.id}" placeholder="Brief note about this dimension (e.g., 'recent relapse at OP, passive SI, lives with using peers')"></textarea>
+        `;
+        container.appendChild(div);
+      });
+    }
+    function updateSeverityDescription(dimId, value) {
+      const descEl = document.querySelector(`.severity-description[data-desc="${dimId}"]`);
+      if (!descEl) return;
+      if (value === "" || value === null) {
+        descEl.textContent = "";
+        descEl.style.display = "none";
+        return;
+      }
+      const dimInfo = ASAM_SEVERITY_DESCRIPTIONS[dimId];
+      if (!dimInfo) {
+        descEl.textContent = "";
+        descEl.style.display = "none";
+        return;
+      }
+      const text = dimInfo.severity[value];
+      if (text) {
+        descEl.textContent = text;
+        descEl.style.display = "block";
+      } else {
+        descEl.textContent = "";
+        descEl.style.display = "none";
+      }
+    }
+    function getRatings() {
+      const ratings = {};
+      dimensionDefs.forEach((dim) => {
+        const select = document.querySelector(`select[data-dimension="${dim.id}"]`);
+        const note = document.querySelector(`textarea[data-note="${dim.id}"]`);
+        const value = select.value === "" ? null : Number(select.value);
+        ratings[dim.id] = {
+          value,
+          note: (note.value || "").trim(),
+        };
+      });
+      return ratings;
+    }
+    function calculateSuggestion() {
+      const ratings = getRatings();
+      const clinicalNotes = document.getElementById("clinicalNotes").value.trim();
+      let highest = -1;
+      let highestDims = [];
+      const values = [];
+      for (const dim of dimensionDefs) {
+        const val = ratings[dim.id].value;
+        if (val !== null) {
+          values.push(val);
+          if (val > highest) {
+            highest = val;
+            highestDims = [dim];
+          } else if (val === highest) {
+            highestDims.push(dim);
+          }
+        }
+      }
+      const severityBadge = document.getElementById("severityBadge");
+      const suggestedLevelEl = document.getElementById("suggestedLevel");
+      const riskAlert = document.getElementById("riskAlert");
+      const clinicianLevel = document.getElementById("clinicianLevel");
+      const summaryText = document.getElementById("summaryText");
+      riskAlert.style.display = "none";
+      riskAlert.className = "alert";
+      if (values.length === 0) {
+        severityBadge.textContent = "No ratings";
+        suggestedLevelEl.textContent =
+          "Please rate at least one ASAM dimension (0–4) to generate a suggestion.";
+        summaryText.value = "";
+        return;
+      }
+      const countAtOrAbove = (threshold) =>
+        values.filter((v) => v >= threshold).length;
+      const clinicalSeverity =
+        highest <= 1 ? "Low" : highest === 2 ? "Moderate" : "High";
+      severityBadge.textContent = `Highest severity: ${highest} (${clinicalSeverity})`;
+      let suggestion = "";
+      let extraWarning = "";
+      const d1 = ratings["d1"].value;
+      const d2 = ratings["d2"].value;
+      const d3 = ratings["d3"].value;
+      const d5 = ratings["d5"].value;
+      const d6 = ratings["d6"].value;
+      // Immediate high-risk conditions
+      if ((d1 !== null && d1 >= 4) || (d2 !== null && d2 >= 4)) {
+        suggestion =
+          "Recommend referral for Level 4 – medically managed inpatient / detox (or ED evaluation), due to severe withdrawal or biomedical instability.";
+        extraWarning =
+          "Dimension 1 or 2 rated at 4 suggests potential medical emergency or need for 24-hour medical monitoring.";
+        riskAlert.textContent =
+          "High medical risk: follow your emergency / medical protocols immediately. This tool cannot replace real-time medical assessment.";
+        riskAlert.className = "alert alert-danger";
+        riskAlert.style.display = "block";
+      } else if (d3 !== null && d3 >= 4) {
+        suggestion =
+          "Recommend psychiatric inpatient or ED evaluation (Level 4–type care), due to imminent risk to self/others or extreme psychiatric instability.";
+        extraWarning =
+          "Dimension 3 rated at 4 suggests imminent danger; outpatient is not appropriate.";
+        riskAlert.textContent =
+          "High psychiatric risk: follow your suicide/homicide and emergency protocols immediately.";
+        riskAlert.className = "alert alert-danger";
+        riskAlert.style.display = "block";
+      } else if (d1 !== null && d1 === 3) {
+        suggestion =
+          "Recommend Level 3.7 – medically monitored withdrawal management / detox, with step-down to outpatient or IOP after stabilization.";
+        extraWarning =
+          "Moderate-to-severe withdrawal risk often requires 24-hour withdrawal management.";
+      } else if (d3 !== null && d3 === 3 && ((d5 !== null && d5 >= 2) || (d6 !== null && d6 >= 2))) {
+        suggestion =
+          "Recommend at least Level 2.5 (day treatment / PHP) or 3.x (residential) due to severe psychiatric symptoms plus elevated relapse risk or an unsupportive environment.";
+        extraWarning =
+          "Combination of Dimension 3 = 3 with Dimension 5 or 6 ≥ 2 suggests need for higher structure than standard outpatient.";
+      } else if (
+        ((d5 !== null && d5 >= 3) || (d6 !== null && d6 >= 3)) &&
+        countAtOrAbove(2) >= 2
+      ) {
+        suggestion =
+          "Recommend Level 3.x residential (or at minimum 2.5 with strong case management), given high relapse risk or unsafe environment plus multiple moderate/severe needs.";
+        extraWarning =
+          "High relapse/environmental risk with multiple moderate needs often indicates residential or very intensive programming.";
+      } else {
+        // Outpatient / IOP / PHP logic
+        if (highest <= 1) {
+          const hasSUDorMH =
+            values.some((v) => v >= 1);
+          if (!hasSUDorMH) {
+            suggestion =
+              "Suggest Level 0.5 – early intervention / brief intervention and monitoring.";
+          } else {
+            suggestion =
+              "Suggest Level 1.0 – standard outpatient services (e.g., 1–2 sessions per week, possibly plus group).";
+          }
+        } else if (highest === 2) {
+          const numModerateOrHigher = countAtOrAbove(2);
+          if (numModerateOrHigher === 1) {
+            suggestion =
+              "Suggest Level 2.1 – intensive outpatient program (IOP), as one domain is at moderate severity.";
+          } else {
+            suggestion =
+              "Suggest Level 2.5 – day treatment / PHP (or low-intensity residential), as multiple dimensions are at moderate severity.";
+          }
+        } else if (highest === 3) {
+          const numSevere = countAtOrAbove(3);
+          if (numSevere === 1 && countAtOrAbove(2) <= 2) {
+            suggestion =
+              "Suggest Level 2.5 – day treatment / PHP, with close monitoring for possible need to step up if risk increases.";
+          } else {
+            suggestion =
+              "Suggest Level 3.x residential or high-intensity day treatment, due to several serious needs across ASAM dimensions.";
+          }
+        }
+      }
+      suggestedLevelEl.textContent = suggestion;
+      // If clinician has not explicitly selected a level, prefill with the suggestion's main level
+      if (!clinicianLevel.value) {
+        if (suggestion.includes("0.5")) {
+          clinicianLevel.value = "0.5 – Early intervention";
+        } else if (suggestion.includes("1.0 – standard outpatient")) {
+          clinicianLevel.value = "1.0 – Outpatient";
+        } else if (suggestion.includes("2.1 – intensive outpatient")) {
+          clinicianLevel.value = "2.1 – Intensive outpatient (IOP)";
+        } else if (suggestion.includes("2.5 – day treatment")) {
+          clinicianLevel.value = "2.5 – Day treatment / PHP";
+        } else if (suggestion.includes("3.7 – medically monitored")) {
+          clinicianLevel.value = "4 – Inpatient / Detox (refer)";
+        } else if (suggestion.includes("3.x residential")) {
+          clinicianLevel.value = "3.x – Residential (refer)";
+        } else if (suggestion.includes("psychiatric inpatient") || suggestion.includes("Level 4")) {
+          clinicianLevel.value = "4 – Inpatient / Detox (refer)";
+        }
+      }
+      // Build summary text
+      const ratingsSummary = dimensionDefs
+        .map((dim) => {
+          const r = ratings[dim.id].value;
+          return `${dim.name} (${dim.label}): ${r === null ? "not rated" : r}`;
+        })
+        .join("; ");
+      const highestDimNames =
+        highestDims.length > 0
+          ? highestDims.map((d) => d.name).join(", ")
+          : "N/A";
+      const chosenLevel = clinicianLevel.value || "[not yet selected]";
+      const overrideReason = document.getElementById("overrideReason").value.trim();
+      let summary =
+        "ASAM-based level of care support note:\n\n" +
+        `Dimension ratings: ${ratingsSummary}.\n` +
+        `Highest rating: ${highest} in ${highestDimNames}.\n` +
+        `System suggestion: ${suggestion}\n`;
+      if (extraWarning) {
+        summary += `\nSystem flagged concern: ${extraWarning}\n`;
+      }
+      summary += `\nClinician-selected level of care: ${chosenLevel}.\n`;
+      if (overrideReason) {
+        summary += `Override rationale / contextual factors: ${overrideReason}\n`;
+      }
+      if (clinicalNotes) {
+        summary += `\nAdditional clinical notes: ${clinicalNotes}\n`;
+      }
+      summary +=
+        "\nThis tool is used as a decision aid and does not replace clinical judgment, supervision, or local standards of care.";
+      summaryText.value = summary;
+    }
+    function resetForm() {
+      createDimensionUI();
+      document.getElementById("clinicalNotes").value = "";
+      document.getElementById("clinicianLevel").value = "";
+      document.getElementById("overrideReason").value = "";
+      document.getElementById("summaryText").value = "";
+      document.getElementById("severityBadge").textContent = "No data yet";
+      document.getElementById("suggestedLevel").textContent =
+        "Enter ratings on the left and click “Calculate suggested level” to see a recommendation.";
+      const riskAlert = document.getElementById("riskAlert");
+      riskAlert.style.display = "none";
+      riskAlert.className = "alert";
+      riskAlert.textContent = "";
+    }
+    function copySummary() {
+      const summary = document.getElementById("summaryText").value;
+      if (!summary) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(summary).catch(() => {});
+      } else {
+        const textarea = document.getElementById("summaryText");
+        textarea.select();
+        document.execCommand("copy");
+      }
+    }
+    function showSafetyReminder() {
+      const msg =
+        "Safety reminder:\n\n" +
+        "- If there is imminent risk of suicide, homicide, or inability to care for basic needs, follow your emergency protocols immediately (e.g., ED evaluation, crisis team, 911 as appropriate).\n" +
+        "- Consider consultation with a supervisor or colleague for any high-risk or ambiguous case.\n" +
+        "- Document risk assessment, safety planning, and rationale for level of care clearly.";
+      alert(msg);
+    }
+    // Initialize
+    createDimensionUI();
+    // Update severity descriptions on change
+    document.getElementById("dimensions").addEventListener("change", (e) => {
+      if (e.target.matches('select[data-dimension]')) {
+        const dimId = e.target.getAttribute("data-dimension");
+        const value = e.target.value;
+        updateSeverityDescription(dimId, value);
+      }
+    });
+    document
+      .getElementById("calculateBtn")
+      .addEventListener("click", calculateSuggestion);
+    document.getElementById("resetBtn").addEventListener("click", resetForm);
+    document
+      .getElementById("copySummaryBtn")
+      .addEventListener("click", copySummary);
+    document
+      .getElementById("quickSafetyBtn")
+      .addEventListener("click", showSafetyReminder);
+  </script>
+</body>
+</html>
